@@ -1,14 +1,9 @@
----
-# tasks file for php
-- name: Install PHP-FPM
-  apt:
-    name: php-fpm
+- name: Installing PHP
+  yum:
+    name: "{{ php_packages }}"
     state: latest
-  when: ansible_os_family == "Debian"
 
-- name: Start PHP service
-  systemd:
-    name: php7.4-fpm
-    state: started
-    enabled: yes
-  when: ansible_os_family == "Debian"
+- name: Copying your php file in the /var/www/html
+  copy:
+    src: /home/ansible/index.html
+    dest: /usr/share/nginx/html

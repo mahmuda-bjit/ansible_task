@@ -1,0 +1,25 @@
+---
+# tasks file for nginx
+- name: Install NGINX Packages
+  yum:
+    name: "{{ nginx }}"
+    state: latest
+
+- name: Start Service
+  service:
+    name: "{{ nginx }}"
+    state: restarted
+    enabled: yes
+
+- name: Reload NGINX
+  service:
+    name: nginx
+    state: reloaded
+  when: ansible_os_family == "RedHat"
+
+- name: Configure Nginx server block
+  template:
+    src: /home/ansible/config/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: Restart Nginx
+  when: ansible_os_family == "RedHat"

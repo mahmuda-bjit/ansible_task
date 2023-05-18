@@ -1,0 +1,12 @@
+---
+# tasks file for mariadb
+- name: Install MYSQL DB Community edition
+  yum:
+    name: "{{ mariadb }}"
+    state: latest
+
+- name: start and enable mysql service
+  service:
+    name: mariadb
+    state: started
+    enabled: true
