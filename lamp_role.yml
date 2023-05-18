@@ -1,0 +1,68 @@
+---
+- hosts: apache
+  become: yes
+
+  vars: 
+    apache: apache2
+    mysql_packages:
+      - mysql-server
+    php_packages:
+      - php
+      - php-mysql
+
+    abc: Text for ubuntu
+
+  tasks:
+    - name: Install Apache pkg
+      apt:
+        name: "{{ apache }}"
+        state: latest
+      when: ansible_os_family == "Debian"
+
+    - name: Start Apache web server
+      service:
+        name: "{{ apache }}"
+        state: started
+        enabled: yes
+
+    - name: Deploy sample HTML file
+      copy:
+        src: /home/ansible/index.html
+        dest: /var/www/html/index.html
+      notify:
+          - restart apache2
+
+    - name: Install MYSQL DB Community edition
+      apt:
+        name: "{{ mysql_packages }}"
+        state: latest
+
+    - name: Start the MYSQL service
+      service:
+        name: mysql
+        enabled: yes
+        state: started
+    
+    - name: Install PHP-FPM
+      apt:
+        name: php-fpm
+        state: latest
+      when: ansible_os_family == "Debian"
+   
+    - name: Start PHP service
+      systemd:
+        name: php7.4-fpm
+        state: started
+        enabled: yes
+      when: ansible_os_family == "Debian"
+    
+    - name: test for template
+      template:
+        src: /home/ansible/templates/test.j2
+        dest: /home/ansible/abc.txt
+    
+  handlers:
+    - name: restart apache2 
+      service:
+        name: apache2
+        state: restarted

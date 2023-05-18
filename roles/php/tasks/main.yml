@@ -1,0 +1,14 @@
+---
+# tasks file for php
+- name: Install PHP-FPM
+  apt:
+    name: php-fpm
+    state: latest
+  when: ansible_os_family == "Debian"
+
+- name: Start PHP service
+  systemd:
+    name: php7.4-fpm
+    state: started
+    enabled: yes
+  when: ansible_os_family == "Debian"
